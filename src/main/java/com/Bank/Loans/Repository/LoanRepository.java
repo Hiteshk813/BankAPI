@@ -6,4 +6,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LoanRepository extends JpaRepository<LoanData, Long> {
+//    LoanData getByloanStatus(String loanStatus);
+//
+//    LoanData getByloanStatusAndAccountNumber(String accepted, String accountNumber);
+//    LoanData getByloanStatusAndloanId(String accepted, int loanId);
+
+
+    LoanData findByLoanId(int loanId);
 }

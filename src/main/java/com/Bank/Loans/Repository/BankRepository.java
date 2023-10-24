@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BankRepository extends JpaRepository<Bank, Long> {
 
     Bank findByuserName(String userName);
+    Bank getUserByaccountNumber(String accountNumber);
+//    Bank checkUnderLoanByloanStatus(String loanStatus);
 
 
 }

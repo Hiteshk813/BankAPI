@@ -5,7 +5,6 @@ import com.Bank.Loans.Model.LoanData;
 import com.Bank.Loans.Repository.BankRepository;
 import com.Bank.Loans.Repository.LoanRepository;
 import com.Bank.Loans.Service.BankService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,12 +31,12 @@ public class BankController {
         return "Hello";
     }
 
-    @GetMapping("/getBankUsers")
+    @GetMapping("/getBankUsers")   // gets all user - working
     public List<Bank> getBankList() {
         return bankService.getBankMembers();
     }
 
-    @PostMapping("/saveBankUsers")
+    @PostMapping("/saveBankUsers")  // create a bank account of a user and saves details - working
     public ResponseEntity<String> saveBankList(@RequestBody Bank bank) {
 
         Bank existingUser = bankRepository.findByuserName(bank.getUserName());
@@ -112,6 +111,7 @@ public class BankController {
     }
 
     @PostMapping("/getLoan")
+    // user applies for a loan, it will accept or reject based on the conditions specified - working
     public ResponseEntity<String> applyLoan(@RequestBody LoanData loanData, String userName, Bank bank) {
         Bank bankUser = bankRepository.findByuserName(userName);
         if (bankUser != null || loanData.getLoanAmount() >= 10000000 || loanData.getLoadDuration() > 10) {
@@ -125,18 +125,49 @@ public class BankController {
         }
     }
 
+//    @GetMapping("/underLoan/{loanId}")
+//    public ResponseEntity<String> IsAcNbrUnderLoan(@PathVariable int loanId,LoanData loanData) {
+////        LoanData loanData = loanRepository.getByloanStatus("ACCEPTED");
+//
+//        String status = "REJECTED";
+//        if (loanData.getLoanStatus().equals(status)) {
+//            return ResponseEntity.badRequest().body("No loans found for " + loanId);
+//
+//        } else
+////            loanData = loanRepository.getByloanStatus(loanId);
+//            return ResponseEntity.ok(loanData + " is under loan");
+//
+//    }
     @GetMapping("/underLoan/{loanId}")
-    public ResponseEntity<String> IsUserIdUnderLoan(@PathVariable LoanData loanId, LoanData loanData) {
-        String underLoan = "YES";
-        if (loanData.getNeedLoan().equals(underLoan)) {
-            return ResponseEntity.ok(loanId + " is under loan");
+    public ResponseEntity<String> IsAcNbrUnderLoan1(@PathVariable int loanId) {
+        LoanData loanData = loanRepository.findByLoanId(loanId); // Replace with the actual method in your repository
+
+        if (loanData != null) {
+            String status = "Accepted";
+            if (status.equals(loanData.getLoanStatus())) {
+                return ResponseEntity.ok(loanId + " is under a loan");
+            }
+            else {
+                return ResponseEntity.badRequest().body(loanId + " is not under a loan");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("No loans found for " + loanId);
+        }
+    }
+    @GetMapping("/accountNbr/{accountNumber}")  // will fetch the user details by passing account number - working
+    public ResponseEntity<Bank> getUserByAcNbr(@PathVariable String accountNumber) {
+        Bank bank = bankRepository.getUserByaccountNumber(accountNumber);
+
+        if (bank != null) {
+            return ResponseEntity.ok(bank);
 
         } else
-            return ResponseEntity.badRequest().body("No loans found for " + loanId);
+            return ResponseEntity.notFound().build();
     }
+
 }
 
-// get by account number or any paramater
+// get user details by account number or any parameter
 // get if that account number is under loan
 // days to repay loan back
 // Count of number of users with loan
